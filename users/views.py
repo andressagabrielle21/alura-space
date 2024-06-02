@@ -34,20 +34,16 @@ def login(req):
   
 
 def signup(req):
-  signup_form = SignupForms()
+  form = SignupForms()
 
   if req.method == 'POST':
     form = SignupForms(req.POST)
 
     if form.is_valid():
-      if form["password"].value() != form["password_check"].value():
-        messages.error(req, 'As senhas não correspondem.')
-        return redirect('signup')
-      
       username = form["signup_username"].value()
       email = form["email"].value()
       password = form["password"].value()
-
+      
       if User.objects.filter(username=username).exists():
         messages.error(req, f'O usuário {username} já existe.')
         return redirect('signup')
@@ -61,4 +57,9 @@ def signup(req):
       messages.success(req, f'{username} cadastrado com sucesso!')
       return redirect('login')
 
-  return render(req, 'users/signup.html', {'form': signup_form})
+  return render(req, 'users/signup.html', {'form': form})
+
+def logout(req):
+  auth.logout(req)
+  messages.success(req, 'Logout efetuado! Faça o login.')
+  return redirect('login')

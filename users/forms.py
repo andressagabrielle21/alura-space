@@ -40,3 +40,23 @@ class SignupForms(forms.Form):
       "placeholder": "Confirme sua senha"
     }
   ))
+
+  def clean_signup_username(self):
+    name = self.cleaned_data.get('signup_username')
+
+    if name:
+      name = name.strip()
+      if ' ' in name:
+        raise forms.ValidationError('Espaços não são permitidos no campo de Nome de Cadastro')
+      else:
+        return name
+      
+  def clean_password_check(self):
+    password = self.cleaned_data.get("password")
+    password_check = self.cleaned_data.get("password_check")
+
+    if password and password_check:
+      if password != password_check:
+        raise forms.ValidationError("As senhas não correspondem.")
+      else:
+        return password_check
